@@ -1,7 +1,10 @@
 package com.redhat.service.smartevents.processor;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +21,8 @@ public abstract class AbstractGatewayConnector<T extends Gateway> implements Gat
     public static final String LOG_PROCESSOR_PARENT_PARAMETER = "log";
     public static final String LOG_PROCESSOR_MULTILINE_PARAMETER = "multiLine";
     public static final String LOG_PROCESSOR_SHOWHEADERS_PARAMETER = "showHeaders";
+
+    public static final String CONNECTOR_TOPIC_PARAMETER = "kafka_topic";
 
     @ConfigProperty(name = "managed-connectors.log-enabled")
     boolean logEnabled;
