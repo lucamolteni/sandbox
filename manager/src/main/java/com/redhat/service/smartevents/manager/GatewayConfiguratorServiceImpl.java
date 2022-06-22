@@ -3,7 +3,7 @@ package com.redhat.service.smartevents.manager;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.redhat.service.smartevents.manager.providers.InternalKafkaConfigurationProvider;
+import com.redhat.service.smartevents.manager.providers.InternalKafkaConfigurationProviderImpl;
 import com.redhat.service.smartevents.manager.providers.ResourceNamesProvider;
 import com.redhat.service.smartevents.processor.GatewayConfiguratorService;
 
@@ -17,7 +17,7 @@ public class GatewayConfiguratorServiceImpl implements GatewayConfiguratorServic
     ResourceNamesProvider resourceNamesProvider;
 
     @Inject
-    InternalKafkaConfigurationProvider internalKafkaConfigurationProvider;
+    InternalKafkaConfigurationProviderImpl internalKafkaConfigurationProvider;
 
     @Override
     public String getBridgeEndpoint(String bridgeId, String customerId) {
@@ -47,10 +47,5 @@ public class GatewayConfiguratorServiceImpl implements GatewayConfiguratorServic
     @Override
     public String getSecurityProtocol() {
         return internalKafkaConfigurationProvider.getSecurityProtocol();
-    }
-
-    @Override
-    public String getBridgeErrorTopicName(String testBridgeId) {
-        return resourceNamesProvider.getBridgeErrorTopicName(testBridgeId);
     }
 }
