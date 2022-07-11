@@ -1,5 +1,6 @@
 package com.redhat.service.smartevents.manager.workers.resources;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -53,7 +54,7 @@ public class ProcessorWorker extends AbstractWorker<Processor> {
         processor = persist(processor);
 
         if (hasZeroConnectors(processor)) {
-            LOGGER.debug(
+            LOGGER.info(
                     "No dependencies required for '{}' [{}]",
                     processor.getName(),
                     processor.getId());
@@ -98,13 +99,18 @@ public class ProcessorWorker extends AbstractWorker<Processor> {
 
         // If we have to delete a Managed Connector, delegate to the ConnectorWorker.
         String processorId = work.getManagedResourceId();
-        ConnectorEntity connectorEntity = connectorsDAO.findByProcessorId(processorId);
-        ConnectorEntity updatedConnectorEntity = connectorWorker.deleteDependencies(work, connectorEntity);
-        processor.setDependencyStatus(updatedConnectorEntity.getStatus());
 
-        // If the Connector failed we should mark the Processor as failed too
-        if (updatedConnectorEntity.getStatus() == ManagedResourceStatus.FAILED) {
-            processor.setStatus(ManagedResourceStatus.FAILED);
+        final List<ConnectorEntity> connectorEntities = connectorsDAO.findConnectorsByProcessorId(processorId);
+
+        for (ConnectorEntity connectorEntity : connectorEntities) {
+
+            ConnectorEntity updatedConnectorEntity = connectorWorker.deleteDependencies(work, connectorEntity);
+            processor.setDependencyStatus(updatedConnectorEntity.getStatus());
+
+            // If the Connector failed we should mark the Processor as failed too
+            if (updatedConnectorEntity.getStatus() == ManagedResourceStatus.FAILED) {
+                processor.setStatus(ManagedResourceStatus.FAILED);
+            }
         }
 
         return persist(processor);
@@ -117,10 +123,6 @@ public class ProcessorWorker extends AbstractWorker<Processor> {
     }
 
     protected boolean hasZeroConnectors(Processor processor) {
-        return Objects.isNull(getConnectorEntity(processor));
-    }
-
-    protected ConnectorEntity getConnectorEntity(Processor processor) {
-        return connectorsDAO.findByProcessorId(processor.getId());
+        return connectorsDAO.findConnectorsByProcessorId(processor.getId()).size() == 0;
     }
 }
