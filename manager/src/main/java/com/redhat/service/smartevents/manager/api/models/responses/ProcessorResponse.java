@@ -1,5 +1,6 @@
 package com.redhat.service.smartevents.manager.api.models.responses;
 
+import java.util.List;
 import java.util.Set;
 
 import com.redhat.service.smartevents.infra.models.processors.Processing;
@@ -35,6 +36,9 @@ public class ProcessorResponse extends BaseManagedResourceResponse {
 
     @JsonProperty("action")
     private Action action;
+
+    @JsonProperty("actions")
+    private List<Action> actions;
 
     @JsonProperty("source")
     private Source source;
@@ -88,5 +92,13 @@ public class ProcessorResponse extends BaseManagedResourceResponse {
 
     public void setProcessing(Processing processing) {
         this.processing = processing;
+    }
+
+    public List<Action> getActions() {
+        return actions;
+    }
+
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
     }
 }
