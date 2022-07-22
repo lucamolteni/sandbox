@@ -195,6 +195,7 @@ class ConnectorsServiceTest {
         ProcessorDefinition processorDefinition = new ProcessorDefinition();
         processor.setType(ProcessorType.SINK);
 
+        processorDefinition.setRequestedActions(Arrays.asList(actions));
         processorDefinition.setResolvedActions(Arrays.asList(actions));
 
         processor.setId(TEST_PROCESSOR_ID);

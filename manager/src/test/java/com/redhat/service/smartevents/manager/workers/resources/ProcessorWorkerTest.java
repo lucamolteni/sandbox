@@ -1,6 +1,5 @@
 package com.redhat.service.smartevents.manager.workers.resources;
 
-import java.util.List;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
@@ -14,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.quartz.SchedulerException;
 
 import com.redhat.service.smartevents.infra.models.connectors.ConnectorType;
@@ -40,7 +40,6 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -152,19 +151,19 @@ public class ProcessorWorkerTest {
         connectorsDAO.persist(connectorEntity1);
         connectorsDAO.persist(connectorEntity2);
 
-        Work work = workManager.schedule(processor);
+        Work work = makeWork(processor.getId(), 0, ZonedDateTime.now(ZoneOffset.UTC));
 
         doAnswer((i) -> {
             //Emulate ConnectorWorker completing work
             connectorEntity1.setStatus(ManagedResourceStatus.READY);
             return connectorEntity1;
-        }).when(connectorWorker).handleWork(any(Work.class));
+        }).when(connectorWorker).createDependencies(work, connectorEntity1);
 
         doAnswer((i) -> {
             //Emulate ConnectorWorker completing work
             connectorEntity2.setStatus(ManagedResourceStatus.READY);
             return connectorEntity2;
-        }).when(connectorWorker).handleWork(any(Work.class));
+        }).when(connectorWorker).createDependencies(work, connectorEntity2);
 
         Processor refreshed = worker.handleWork(work);
 
@@ -172,23 +171,8 @@ public class ProcessorWorkerTest {
         assertThat(refreshed.getDependencyStatus()).isEqualTo(ManagedResourceStatus.READY);
 
         ArgumentCaptor<Work> workArgumentCaptor = ArgumentCaptor.forClass(Work.class);
-        verify(connectorWorker, times(2)).handleWork(workArgumentCaptor.capture());
-
-        List<Work> allValues = workArgumentCaptor.getAllValues();
-
-        for (Work w : allValues) {
-            assertionForSingleWork(w, workArgumentCaptor);
-        }
-    }
-
-    private void assertionForSingleWork(Work work, ArgumentCaptor<Work> workArgumentCaptor) {
-        Work connectorWork = workArgumentCaptor.getValue();
-        assertThat(connectorWork).isNotNull();
-        assertThat(connectorWork.getId()).isEqualTo(work.getId());
-        //        assertThat(connectorWork.getManagedResourceId()).isEqualTo(connectorEntity.getId());
-        assertThat(connectorWork.getSubmittedAt()).isEqualTo(work.getSubmittedAt());
-
-        //        assertThat(workManager.exists(work)).isNotEqualTo(isWorkComplete);
+        ArgumentCaptor<ConnectorEntity> connectorEntityArgumentCaptor = ArgumentCaptor.forClass(ConnectorEntity.class);
+        verify(connectorWorker, times(2)).createDependencies(workArgumentCaptor.capture(), connectorEntityArgumentCaptor.capture());
     }
 
     private static Stream<Arguments> srcHandleWorkProvisioningWithKnownResourceWithConnector() {

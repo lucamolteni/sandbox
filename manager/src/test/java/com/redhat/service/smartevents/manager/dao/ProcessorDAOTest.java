@@ -64,12 +64,6 @@ public class ProcessorDAOTest {
         databaseManagerUtils.cleanUpAndInitWithDefaultShard();
     }
 
-    private Processor createSinkProcessor(Bridge bridge, String name) {
-        Processor processor = createProcessorModel(bridge, name, SINK, processorDefinition());
-        processorDAO.persist(processor);
-        return processor;
-    }
-
     private Processor createSinkProcessorWithProcessing(Bridge bridge, String name, Processing processing, List<Action> resolvedActions) {
 
         ProcessorDefinition processingProcessorDefinition = new ProcessorDefinition(Collections.emptySet(),
@@ -205,13 +199,13 @@ public class ProcessorDAOTest {
         processorDAO.getEntityManager().merge(r);
 
         //In the process of being provisioned
-        Processor s = createProcessor(b, "mary");
+        Processor s = createSinkProcessor(b, "mary");
         s.setStatus(ManagedResourceStatus.PROVISIONING);
         s.setDependencyStatus(ManagedResourceStatus.READY);
         processorDAO.getEntityManager().merge(s);
 
         //In the process of being deleted
-        Processor t = createProcessor(b, "sue");
+        Processor t = createSinkProcessor(b, "sue");
         t.setStatus(ManagedResourceStatus.DELETING);
         t.setDependencyStatus(ManagedResourceStatus.DELETED);
         processorDAO.getEntityManager().merge(t);
@@ -640,5 +634,11 @@ public class ProcessorDAOTest {
 
         // Results are sorted descending by default. The first created is the last to be listed.
         IntStream.range(0, 5).forEach(i -> assertThat(results.getItems().get(4 - i).getName()).isEqualTo(String.format("foo%s", i)));
+    }
+
+    private Processor createSinkProcessor(Bridge bridge, String name) {
+        Processor processor = createProcessorModel(bridge, name, SINK, processorDefinition());
+        processorDAO.persist(processor);
+        return processor;
     }
 }

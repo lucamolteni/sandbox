@@ -3,7 +3,6 @@ package com.redhat.service.smartevents.manager.api.models.responses;
 import java.util.List;
 import java.util.Set;
 
-import com.redhat.service.smartevents.infra.models.processors.Processing;
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.microprofile.openapi.annotations.media.Schema;

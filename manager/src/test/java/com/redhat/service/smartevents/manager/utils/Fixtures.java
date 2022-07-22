@@ -69,13 +69,17 @@ public class Fixtures {
     }
 
     public static ConnectorEntity createSinkConnector(Processor p, ManagedResourceStatus status) {
-        return createConnector(p, status, ConnectorType.SINK, "test_sink_0.1", TestConstants.DEFAULT_CONNECTOR_NAME);
+        return createSinkConnector(p, status, TestConstants.DEFAULT_CONNECTOR_NAME);
     }
 
-    public static ConnectorEntity createConnector(Processor p, ManagedResourceStatus status, ConnectorType type, String connectorTypeId, String defaultConnectorName) {
+    public static ConnectorEntity createSinkConnector(Processor p, ManagedResourceStatus status, String connectorName) {
+        return createConnector(p, status, ConnectorType.SINK, "test_sink_0.1", connectorName);
+    }
+
+    public static ConnectorEntity createConnector(Processor p, ManagedResourceStatus status, ConnectorType type, String connectorTypeId, String connectorName) {
         ConnectorEntity connector = new ConnectorEntity();
         connector.setType(type);
-        connector.setName(defaultConnectorName);
+        connector.setName(connectorName);
         connector.setProcessor(p);
         connector.setStatus(status);
         connector.setSubmittedAt(ZonedDateTime.now(ZoneOffset.UTC));
