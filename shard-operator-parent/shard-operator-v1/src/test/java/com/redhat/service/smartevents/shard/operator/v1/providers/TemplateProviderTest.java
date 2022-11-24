@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.redhat.service.smartevents.infra.v1.api.models.processors.ProcessorDefinition;
 import com.redhat.service.smartevents.infra.v1.api.models.processors.ProcessorType;
+import com.redhat.service.smartevents.shard.operator.core.providers.TemplateImportConfig;
 import com.redhat.service.smartevents.shard.operator.core.resources.istio.authorizationpolicy.AuthorizationPolicy;
 import com.redhat.service.smartevents.shard.operator.core.resources.knative.KnativeBroker;
 import com.redhat.service.smartevents.shard.operator.core.utils.LabelsBuilder;

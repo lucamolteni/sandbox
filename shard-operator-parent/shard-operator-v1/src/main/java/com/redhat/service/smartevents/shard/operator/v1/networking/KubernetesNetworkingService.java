@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.redhat.service.smartevents.shard.operator.core.providers.IstioGatewayProvider;
+import com.redhat.service.smartevents.shard.operator.core.providers.TemplateImportConfig;
 import com.redhat.service.smartevents.shard.operator.core.utils.EventSourceFactory;
-import com.redhat.service.smartevents.shard.operator.v1.providers.TemplateImportConfig;
 import com.redhat.service.smartevents.shard.operator.v1.providers.TemplateProvider;
 import com.redhat.service.smartevents.shard.operator.v1.resources.BridgeIngress;
 

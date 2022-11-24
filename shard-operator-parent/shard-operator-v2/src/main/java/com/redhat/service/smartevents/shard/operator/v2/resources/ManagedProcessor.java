@@ -3,7 +3,6 @@ package com.redhat.service.smartevents.shard.operator.v2.resources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redhat.service.smartevents.infra.v2.api.models.dto.ProcessorDTO;
@@ -128,11 +127,7 @@ public class ManagedProcessor extends CustomResource<ManagedProcessorSpec, Manag
             ManagedProcessorSpec.setShardId(customerId);
             ManagedProcessorSpec.setName(processorName);
 
-            try {
-                ManagedProcessorSpec.setFlows(MAPPER.writeValueAsString(processorDefinition));
-            } catch (JsonProcessingException e) {
-                throw new IllegalStateException(String.format("Invalid Processor Definition for processorId: '%s'", processorId), e);
-            }
+            ManagedProcessorSpec.setFlows(processorDefinition);
 
             ManagedProcessor managedProcessor = new ManagedProcessor();
             managedProcessor.setSpec(ManagedProcessorSpec);

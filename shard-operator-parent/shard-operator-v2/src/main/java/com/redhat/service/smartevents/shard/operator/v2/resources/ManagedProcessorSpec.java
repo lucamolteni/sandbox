@@ -2,6 +2,8 @@ package com.redhat.service.smartevents.shard.operator.v2.resources;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class ManagedProcessorSpec {
     private String id;
 
@@ -11,7 +13,7 @@ public class ManagedProcessorSpec {
 
     private String shardId;
 
-    private String flows;
+    private JsonNode flows;
 
     public String getId() {
         return id;
@@ -45,11 +47,11 @@ public class ManagedProcessorSpec {
         this.name = name;
     }
 
-    public String getFlows() {
+    public JsonNode getFlows() {
         return flows;
     }
 
-    public void setFlows(String flows) {
+    public void setFlows(JsonNode flows) {
         this.flows = flows;
     }
 
