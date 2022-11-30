@@ -1,0 +1,42 @@
+apiVersion: sources.knative.dev/v1beta1
+kind: KafkaSource
+metadata:
+  name: ""
+  namespace: ""
+  labels:
+    app.kubernetes.io/managed-by: bridge-fleet-shard-operator # used for filtering of Deployments created by the controller
+    app.kubernetes.io/created-by: bridge-fleet-shard-operator # Specify the operator
+    app.kubernetes.io/component: managed-processor # used to specify the component
+  ownerReferences: # used for finding which ManagedProcessor does this KafkaSource belongs to
+    - apiVersion: ""
+      kind: ""
+      name: ""
+      uid: ""
+spec:
+  consumerGroup: ""
+  bootstrapServers:
+    []
+  topics:
+    []
+  net:
+    tls:
+      enable: true
+    sasl:
+      enable: true
+      user:
+        secretKeyRef: # There will be a secret created for the bridge with the BridgeId name
+          name: ""
+          key: "kafka-clientId"
+      password:
+        secretKeyRef:
+          name: ""
+          key: "kafka-secret"
+      type:
+        secretKeyRef:
+          name: kafka-sink-auth
+          key: sasl.mechanism
+  sink:
+    ref:
+      apiVersion: eventing.knative.dev/v1
+      kind: Broker
+      name: ""

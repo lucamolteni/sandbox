@@ -87,6 +87,10 @@
       <artifactId>logger-java-log4j</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.fabric8</groupId>
+      <artifactId>knative-model</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <testResources>

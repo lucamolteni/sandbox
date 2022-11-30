@@ -36,7 +36,6 @@ public class NamespaceProviderImplTest {
                 .withNamespace(expectedNamespace)
                 .withCustomerId(UUID.randomUUID().toString())
                 .withBridgeName(UUID.randomUUID().toString())
-                .withHost(UUID.randomUUID().toString())
                 .withOwner(UUID.randomUUID().toString())
                 .build();
 

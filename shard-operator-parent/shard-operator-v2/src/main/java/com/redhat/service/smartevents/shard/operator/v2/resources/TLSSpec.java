@@ -1,6 +1,12 @@
 package com.redhat.service.smartevents.shard.operator.v2.resources;
 
 public class TLSSpec {
+
+    public TLSSpec(String key, String certificate) {
+        this.certificate = certificate;
+        this.key = key;
+    }
+
     String certificate;
 
     String key;

@@ -11,6 +11,9 @@ import com.redhat.service.smartevents.shard.operator.v2.TestSupport;
 import com.redhat.service.smartevents.shard.operator.v2.resources.CamelIntegration;
 import com.redhat.service.smartevents.shard.operator.v2.resources.ManagedProcessor;
 
+import io.fabric8.knative.eventing.contrib.kafka.v1beta1.KafkaSASLSpec;
+import io.fabric8.knative.eventing.contrib.kafka.v1beta1.KafkaSource;
+import io.fabric8.knative.eventing.contrib.kafka.v1beta1.KafkaSourceSpec;
 import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.OwnerReference;
 import io.fabric8.kubernetes.client.CustomResource;
@@ -49,6 +52,31 @@ public class TemplateProviderImplTest {
         assertThat(camelIntegration.getMetadata().getName()).isEqualTo("proc-id");
         assertThat(camelIntegration.getMetadata().getNamespace()).isEqualTo("ns");
         assertThat(camelIntegration.getSpec().getFlows()).isEqualTo(new ArrayList<>());
+    }
+
+    @Test
+    public void kafkaSourceTemplateIsProvided() {
+        TemplateProvider templateProvider = new TemplateProviderImpl();
+        KafkaSource kafkaSource = templateProvider.loadKafkaSourceTemplate(MANAGED_PROCESSOR, TemplateImportConfig.withDefaults());
+
+        ObjectMeta metadata = kafkaSource.getMetadata();
+        assertOwnerReference(MANAGED_PROCESSOR, metadata);
+        assertLabels(metadata, MANAGED_PROCESSOR.COMPONENT_NAME);
+
+        assertThat(metadata.getName()).isEqualTo("proc-id");
+        assertThat(metadata.getNamespace()).isEqualTo("ns");
+
+        KafkaSourceSpec spec = kafkaSource.getSpec();
+        assertThat(spec.getConsumerGroup()).isBlank();
+        assertThat(spec.getBootstrapServers()).isEmpty();
+        assertThat(spec.getTopics()).isEmpty();
+
+        KafkaSASLSpec sasl = spec.getNet().getSasl();
+        assertThat(sasl.getUser().getSecretKeyRef().getKey()).isBlank();
+        assertThat(sasl.getPassword().getSecretKeyRef().getKey()).isBlank();
+
+        assertThat(spec.getSink().getRef().getName()).isBlank();
+
     }
 
     private void assertLabels(ObjectMeta meta, String component) {
